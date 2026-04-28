@@ -465,6 +465,37 @@ body {
   color: var(--accent);
 }
 
+.stat-edit {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: text;
+  line-height: 1;
+}
+.stat-edit:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.stat-edit-input {
+  width: 84px;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 2px 6px;
+  text-align: right;
+  outline: none;
+}
+.stat-edit-input:focus {
+  border-color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
 .slider-track-wrap {
   position: relative;
   height: 24px;

@@ -74,6 +74,83 @@ function TickerNum({ value, decimals = 1, duration = 220, snapDelta = 1.5 }) {
   return <span>{displayRef.current.toFixed(decimals)}</span>;
 }
 
+function clamp(n, min, max) {
+  if (!Number.isFinite(n)) return min;
+  if (n < min) return min;
+  if (n > max) return max;
+  return n;
+}
+
+function decimalsForStep(step) {
+  const s = String(step ?? "");
+  const i = s.indexOf(".");
+  return i === -1 ? 0 : s.length - i - 1;
+}
+
+function EditableStatValue({ stat, value, range, onChange }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value.toFixed(1)));
+  const inputRef = useRef(null);
+  const decimals = decimalsForStep(range.step);
+
+  useEffect(() => {
+    if (!editing) setDraft(String(value.toFixed(decimals)));
+  }, [editing, value, decimals]);
+
+  useEffect(() => {
+    if (!editing) return;
+    const el = inputRef.current;
+    if (!el) return;
+    el.focus();
+    el.select();
+  }, [editing]);
+
+  const commit = () => {
+    const n = clamp(Number(draft), range.min, range.max);
+    const snapped = Math.round(n / range.step) * range.step;
+    const fixed = Number(snapped.toFixed(decimals));
+    onChange(stat, fixed);
+    setEditing(false);
+  };
+
+  const cancel = () => {
+    setDraft(String(value.toFixed(decimals)));
+    setEditing(false);
+  };
+
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        className="stat-edit"
+        onClick={() => setEditing(true)}
+        aria-label={`Edit ${range.label}`}
+      >
+        <TickerNum value={value} decimals={decimals} />
+      </button>
+    );
+  }
+
+  return (
+    <input
+      ref={inputRef}
+      className="stat-edit-input"
+      type="number"
+      inputMode="decimal"
+      min={range.min}
+      max={range.max}
+      step={range.step}
+      value={draft}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") commit();
+        else if (e.key === "Escape") cancel();
+      }}
+    />
+  );
+}
+
 // ─── Slider row ───
 function StatSlider({ stat, value, range, onChange }) {
   const pct = ((value - range.min) / (range.max - range.min)) * 100;
@@ -85,7 +162,7 @@ function StatSlider({ stat, value, range, onChange }) {
           <span className="stat-full">{range.full}</span>
         </div>
         <div className="slider-value">
-          <TickerNum value={value} decimals={1} />
+          <EditableStatValue stat={stat} value={value} range={range} onChange={onChange} />
         </div>
       </div>
       <div className="slider-track-wrap">
