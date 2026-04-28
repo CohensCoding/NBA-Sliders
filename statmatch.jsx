@@ -335,28 +335,6 @@ function StatLine({ row, compact }) {
           </div>
         ))}
       </div>
-      <div className="sm-statline-row sm-statline-row-sec">
-        <div className="sm-statcell">
-          <span className="sm-statcell-v">{((row.fg || 0) * 100).toFixed(1)}%</span>
-          <span className="sm-statcell-l">FG</span>
-        </div>
-        <div className="sm-statcell">
-          <span className="sm-statcell-v">{((row.tp || 0) * 100).toFixed(1)}%</span>
-          <span className="sm-statcell-l">3P</span>
-        </div>
-        <div className="sm-statcell">
-          <span className="sm-statcell-v">{((row.ft || 0) * 100).toFixed(1)}%</span>
-          <span className="sm-statcell-l">FT</span>
-        </div>
-        <div className="sm-statcell">
-          <span className="sm-statcell-v">{row.mpg?.toFixed?.(1) ?? row.mpg}</span>
-          <span className="sm-statcell-l">MPG</span>
-        </div>
-        <div className="sm-statcell">
-          <span className="sm-statcell-v">{row.gp}</span>
-          <span className="sm-statcell-l">GP</span>
-        </div>
-      </div>
     </div>
   );
 }
