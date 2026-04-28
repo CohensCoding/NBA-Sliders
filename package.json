@@ -1,0 +1,12 @@
+{
+  "name": "nba-sliders",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:seasons": "node scripts/build-seasons.js"
+  },
+  "dependencies": {
+    "csv-parse": "^5.6.0"
+  }
+}
+

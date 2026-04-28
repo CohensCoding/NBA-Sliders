@@ -387,7 +387,7 @@ function App() {
           </div>
           <div className="controls-footnote">
             Distance computed across {seasons.length} player-seasons using
-            z-score normalized weighted Euclidean. Demo data — illustrative only.
+            z-score normalized weighted Euclidean.
           </div>
         </aside>
       </main>

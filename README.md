@@ -31,10 +31,24 @@ Project → Settings → Domains → add yours. Vercel auto-issues the SSL cert.
 - `silhouette.jsx` — abstract line-art player illustrations
 - `tweaks-panel.jsx` — in-page tweak controls (off by default in production)
 - `styles.css` — global styles
-- `data/seasons.js` — the player-season dataset
+- `data/seasons.js` — the player-season dataset (sample by default)
 - `data/teams.js` — team color palettes & jersey numbers
 - `data/match.js` — z-score normalization + similarity scoring
 - `vercel.json` — caching headers (optional, sensible defaults)
+
+## Hook up your real data (build `data/seasons.js`)
+
+This repo ships with a tiny sample dataset in `data/seasons.js`. To generate a full player-season dataset from your local CSVs:
+
+1. Put `PlayerStatistics.csv` **next to** this repo folder (the script expects it at `../PlayerStatistics.csv`).
+2. From inside this repo:
+
+```bash
+npm install
+npm run build:seasons
+```
+
+That will overwrite `data/seasons.js` with an auto-generated `window.SEASONS = [...]` array that the app loads on page load.
 
 ## Notes
 
