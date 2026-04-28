@@ -400,6 +400,84 @@ function emojiGridFromGuesses(guesses, targetName) {
     .join("");
 }
 
+function heightToInches(h) {
+  // "6'7\"" -> 79
+  if (!h) return null;
+  const m = String(h).match(/(\d+)\s*'\s*(\d+)/);
+  if (!m) return null;
+  const ft = Number(m[1]);
+  const inch = Number(m[2]);
+  if (!Number.isFinite(ft) || !Number.isFinite(inch)) return null;
+  return ft * 12 + inch;
+}
+
+function bestGuessRowForPlayer(seasons, playerName, targetSeasonLabel) {
+  const want = normalizeGuess(playerName);
+  const rows = seasons.filter((r) => normalizeGuess(r.n) === want);
+  if (!rows.length) return null;
+  // Prefer the same season as the puzzle if available (makes team/division feedback meaningful).
+  const sameSeason = rows.filter((r) => r.s === targetSeasonLabel);
+  const pool = sameSeason.length ? sameSeason : rows;
+  // Pick the highest-minute season as "representative".
+  pool.sort((a, b) => (b.totMin || 0) - (a.totMin || 0));
+  return pool[0];
+}
+
+function compareAttr(key, guessRow, targetRow) {
+  const gv = guessRow?.[key] ?? null;
+  const tv = targetRow?.[key] ?? null;
+  if (gv == null || gv === "" || tv == null || tv === "") return { status: "unknown", gv, tv };
+
+  if (key === "height") {
+    const gi = heightToInches(gv);
+    const ti = heightToInches(tv);
+    if (gi == null || ti == null) return { status: "unknown", gv, tv };
+    if (gi === ti) return { status: "correct", gv, tv };
+    if (Math.abs(gi - ti) <= 1) return { status: "close", gv, tv };
+    return { status: "wrong", gv, tv };
+  }
+
+  const g = String(gv);
+  const t = String(tv);
+  return { status: g === t ? "correct" : "wrong", gv, tv };
+}
+
+function GuessFeedbackTable({ seasons, guesses, target }) {
+  if (!guesses.length) return null;
+  return (
+    <div className="sm-guess-grid" role="table" aria-label="Guess feedback">
+      <div className="sm-guess-head" role="row">
+        <div className="sm-guess-nameh" role="columnheader">GUESS</div>
+        {CLUE_LABELS.map((l) => (
+          <div key={l} className="sm-guess-colh" role="columnheader">{l}</div>
+        ))}
+      </div>
+      {guesses.map((g, gi) => {
+        const row = bestGuessRowForPlayer(seasons, g, target.s);
+        const cells = CLUE_KEYS.map((k) => compareAttr(k, row, target));
+        return (
+          <div key={`${gi}-${g}`} className="sm-guess-row" role="row">
+            <div className="sm-guess-name" role="cell">
+              <span className="sm-prev-x" aria-hidden>×</span>
+              {g}
+            </div>
+            {cells.map((c, i) => (
+              <div
+                key={CLUE_KEYS[i]}
+                role="cell"
+                className={`sm-guess-cell sm-guess-${c.status}`}
+                title={c.status === "unknown" ? "Unknown" : c.status}
+              >
+                {c.status === "correct" ? "✓" : c.status === "close" ? "≈" : c.status === "wrong" ? "×" : "—"}
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function StatMatchApp() {
   const seasons = window.SEASONS || [];
   const urlParams = useMemo(() => new URLSearchParams(window.location.search), []);
@@ -648,18 +726,7 @@ function StatMatchApp() {
                   </ul>
                 )}
               </div>
-              {guesses.length > 0 && (
-                <ul className="sm-prev">
-                  {guesses.map((g, gi) => (
-                    <li key={`${gi}-${g}`}>
-                      <span className="sm-prev-x" aria-hidden>
-                        ×
-                      </span>
-                      {g}
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <GuessFeedbackTable seasons={seasons} guesses={guesses} target={target} />
             </section>
           </>
         )}

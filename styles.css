@@ -961,6 +961,75 @@ body {
   font-weight: 900;
 }
 
+.sm-guess-grid {
+  margin-top: 12px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+.sm-guess-head,
+.sm-guess-row {
+  display: grid;
+  grid-template-columns: 1.6fr repeat(5, 1fr);
+}
+.sm-guess-head {
+  background: var(--paper-2);
+  border-bottom: 1px solid var(--rule);
+}
+.sm-guess-nameh,
+.sm-guess-colh {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  padding: 8px 8px;
+  text-transform: uppercase;
+}
+.sm-guess-colh {
+  text-align: center;
+}
+.sm-guess-row {
+  border-top: 1px solid var(--rule-soft);
+}
+.sm-guess-name {
+  padding: 10px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sm-guess-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 800;
+  border-left: 1px solid var(--rule-soft);
+  min-height: 36px;
+}
+.sm-guess-correct {
+  background: oklch(0.92 0.08 150);
+  color: oklch(0.25 0.06 150);
+}
+.sm-guess-close {
+  background: oklch(0.93 0.08 85);
+  color: oklch(0.28 0.05 80);
+}
+.sm-guess-wrong {
+  background: oklch(0.92 0.07 25);
+  color: oklch(0.30 0.12 25);
+}
+.sm-guess-unknown {
+  background: var(--paper);
+  color: var(--muted);
+}
+
 .sm-result {
   display: flex;
   flex-direction: column;
@@ -1109,6 +1178,14 @@ body {
   .sm-testlbl {
     justify-content: space-between;
     width: 100%;
+  }
+  .sm-guess-head,
+  .sm-guess-row {
+    grid-template-columns: 1.4fr repeat(5, 1fr);
+  }
+  .sm-guess-nameh,
+  .sm-guess-colh {
+    padding: 6px 6px;
   }
 }
 
