@@ -1,6 +1,6 @@
-# Stat Twin
+# Stat Twin + Stat Match
 
-An editorial NBA stat-matching toy. Drag five sliders (PPG / RPG / APG / SPG / BPG) and the closest historical player-season pops up — across 100+ player-seasons from the last 30 years.
+**Stat Match** (`/`) — daily NBA player guessing game (mobile-first). **Stat Twin** (`/explore`) — the original slider / explorer (unchanged). Both share `data/seasons.js`, typography, and styling.
 
 ## Deploy to Vercel (no build step)
 
@@ -24,23 +24,30 @@ This is a pure static site — Vercel just serves the files. No framework, no `n
 
 Project → Settings → Domains → add yours. Vercel auto-issues the SSL cert.
 
+## Routes
+
+- `/` — Stat Match (daily game)
+- `/explore` — Stat Twin (sliders)
+
 ## What's in here
 
-- `index.html` — the page
-- `app.jsx` — main React app (matching, sliders, layout)
+- `index.html` — Stat Match entry
+- `explore/index.html` — Stat Twin entry
+- `statmatch.jsx` — daily game UI + logic
+- `app.jsx` — Stat Twin React app (matching, sliders, layout)
 - `silhouette.jsx` — abstract line-art player illustrations
 - `tweaks-panel.jsx` — in-page tweak controls (off by default in production)
 - `styles.css` — global styles
-- `data/seasons.js` — the player-season dataset (sample by default)
+- `data/seasons.js` — player-season dataset (generated; includes Stat Match clue fields)
 - `data/teams.js` — team color palettes & jersey numbers
 - `data/match.js` — z-score normalization + similarity scoring
 - `vercel.json` — caching headers (optional, sensible defaults)
 
 ## Hook up your real data (build `data/seasons.js`)
 
-This repo ships with a tiny sample dataset in `data/seasons.js`. To generate a full player-season dataset from your local CSVs:
+To regenerate `data/seasons.js` from your local CSVs:
 
-1. Put `PlayerStatistics.csv` **next to** this repo folder (the script expects it at `../PlayerStatistics.csv`).
+1. Put `PlayerStatistics.csv` and `Players.csv` **next to** this repo folder (`../PlayerStatistics.csv`, `../Players.csv`).
 2. From inside this repo:
 
 ```bash
