@@ -370,13 +370,6 @@ function App() {
 
       <header className="masthead">
         <div className="masthead-left">
-          <nav className="sm-mode-nav sm-mode-nav-mast" aria-label="Site modes">
-            <a href="/" className="sm-mode">
-              Stat Match
-            </a>
-            <span className="sm-mode-sep">·</span>
-            <span className="sm-mode sm-mode-active">Explore</span>
-          </nav>
           <div className="kicker">Volume 01 · Issue 04</div>
           <div className="wordmark">
             <span className="word-stat">STAT</span>
@@ -489,10 +482,6 @@ function App() {
         <span>{seasonCountLabel} SEASONS INDEXED (≥ 500 MIN)</span>
         <span className="dot">·</span>
         <span>SET IN PLAYFAIR & INTER</span>
-        <span className="dot">·</span>
-        <a href="/" className="credit-link">
-          DAILY GAME
-        </a>
         <span className="dot">·</span>
         <a
           href="https://www.linkedin.com/in/jake-cohen-b564764b/"
