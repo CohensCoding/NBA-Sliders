@@ -689,6 +689,54 @@ body {
   border-bottom: 2px solid var(--ink);
   margin-bottom: 12px;
 }
+.sm-testbar {
+  margin: 10px 0 6px;
+  padding: 10px 10px 8px;
+  border: 1px dashed var(--rule);
+  background: var(--paper-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.sm-testbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.sm-testbadge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  padding: 3px 6px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: var(--paper);
+}
+.sm-testlbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.sm-testselect {
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 6px 8px;
+}
+.sm-testbtn {
+  min-height: 40px;
+  padding: 10px 12px;
+  flex: 0 0 auto;
+}
 .sm-header-row {
   display: flex;
   justify-content: space-between;
@@ -1053,6 +1101,14 @@ body {
   }
   .sm-wordmark {
     font-size: 38px;
+  }
+  .sm-testbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sm-testlbl {
+    justify-content: space-between;
+    width: 100%;
   }
 }
 

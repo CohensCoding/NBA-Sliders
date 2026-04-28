@@ -62,6 +62,17 @@ function hash32(str) {
   return h >>> 0;
 }
 
+function seasonStartYearFromLabel(seasonLabel) {
+  const y = Number(String(seasonLabel || "").slice(0, 4));
+  return Number.isFinite(y) ? y : NaN;
+}
+
+function currentSeasonStartYearFromDateKey(dateKey) {
+  // If it's Oct-Dec, season start is that year; else previous year.
+  const [y, m] = dateKey.split("-").map(Number);
+  return m >= 10 ? y : y - 1;
+}
+
 function tierRank(tier) {
   const o = { AllNBA: 5, AllStar: 4, Starter: 3, Rotation: 2, Qualifier: 1, DeepCut: 0 };
   return o[tier] ?? 0;
@@ -92,57 +103,87 @@ function filterQualifyingBase(seasons) {
   return seasons.filter((r) => (r.totMin || 0) >= 500);
 }
 
-function poolForDayWithFallback(seasons, weekdayUtc, careerIdx) {
-  // 0=Sun .. 6=Sat (JS getUTCDay)
+function poolForDayWithFallback(seasons, dateKey, weekdayOverride) {
   const base = filterQualifyingBase(seasons);
+  const seasonStartNow = currentSeasonStartYearFromDateKey(dateKey);
+  const cutoff30 = seasonStartNow - 29;
+  const cutoff15 = seasonStartNow - 14;
 
-  const careerStarter = (r) => {
-    const a = careerIdx.get(r.n);
-    return !!a && a.games >= 200; // proxy for "career starts" unavailable in v1
+  const inLastNYears = (r, cutoff) => seasonStartYearFromLabel(r.s) >= cutoff;
+
+  // Heuristic buckets (since we don't have official awards/all-star data):
+  const allStar30 = (r) => isAllStarSeason(r) && inLastNYears(r, cutoff30);
+  const allStar15 = (r) => isAllStarSeason(r) && inLastNYears(r, cutoff15);
+  const allNbaLike30 = (r) => (r.tier === "AllNBA" || r.ppg >= 26) && inLastNYears(r, cutoff30);
+
+  const nearAllStarOrLowAllStar = (r) => {
+    // Great-but-not-constant stars:
+    // - high starter seasons that didn't hit our AllStar heuristic
+    // - OR borderline AllStar tier with slightly lower profile
+    const borderline =
+      r.tier === "Starter" && r.mpg >= 30 && (r.ppg >= 17 || r.apg >= 6.5 || r.rpg >= 10);
+    const lowAllStar = r.tier === "AllStar" && r.ppg < 22.5 && r.mpg < 33;
+    return (borderline || lowAllStar) && inLastNYears(r, cutoff30);
   };
-  const careerRotation = (r) => {
-    const a = careerIdx.get(r.n);
-    if (!a || a.games <= 0) return false;
-    return a.minutes / a.games >= 10; // career MPG avg proxy
+
+  const rolePlayersAndSixthMen30 = (r) => {
+    // Rotation/role archetype: minutes but not lead-scoring profile.
+    const role =
+      (r.tier === "Rotation" || r.tier === "Qualifier" || r.tier === "DeepCut") &&
+      r.mpg >= 16 &&
+      r.mpg <= 30 &&
+      r.ppg <= 18.5;
+    return role && inLastNYears(r, cutoff30);
   };
+
+  const nichePool = (r) => {
+    const niche = r.tier === "DeepCut" || r.tier === "Qualifier" || r.mpg <= 20;
+    return niche && inLastNYears(r, cutoff30);
+  };
+
+  // 0=Sun .. 6=Sat (JS getUTCDay)
+  const wd =
+    typeof weekdayOverride === "number" && weekdayOverride >= 0 && weekdayOverride <= 6
+      ? weekdayOverride
+      : new Date(`${dateKey}T12:00:00Z`).getUTCDay();
 
   // Ordered from easier -> harder. If a pool is empty, fall forward to the next harder pool.
   const pools = {
-    1: [ // Monday
-      (xs) => xs.filter(isAllStarSeason),
-      (xs) => xs.filter(careerStarter),
-      (xs) => xs.filter(careerRotation),
-      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
-      (xs) => xs, // qualifying pool
+    1: [ // Monday: all-NBA-ish (last 30)
+      (xs) => xs.filter(allNbaLike30),
+      (xs) => xs.filter(allStar30),
+      (xs) => xs.filter((r) => inLastNYears(r, cutoff30)),
     ],
-    2: [ // Tuesday
-      (xs) => xs.filter(careerStarter),
-      (xs) => xs.filter(careerRotation),
-      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
-      (xs) => xs,
+    2: [ // Tuesday: all-star-ish (last 15)
+      (xs) => xs.filter(allStar15),
+      (xs) => xs.filter(allStar30),
+      (xs) => xs.filter((r) => inLastNYears(r, cutoff15)),
     ],
-    3: [ // Wednesday
-      (xs) => xs.filter(careerRotation),
-      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
-      (xs) => xs,
+    3: [ // Wednesday: all-star-ish (last 30)
+      (xs) => xs.filter(allStar30),
+      (xs) => xs.filter((r) => inLastNYears(r, cutoff30)),
     ],
-    4: [ // Thursday
-      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
-      (xs) => xs,
+    4: [ // Thursday: near-all-stars / low all-star count archetype (last 30)
+      (xs) => xs.filter(nearAllStarOrLowAllStar),
+      (xs) => xs.filter((r) => r.tier === "Starter" && inLastNYears(r, cutoff30)),
+      (xs) => xs.filter(allStar30),
     ],
-    5: [ // Friday
-      (xs) => xs, // qualifying pool (500+)
+    5: [ // Friday: role players / sixth men (last 30)
+      (xs) => xs.filter(rolePlayersAndSixthMen30),
+      (xs) => xs.filter((r) => (r.tier === "Rotation" || r.tier === "Qualifier") && inLastNYears(r, cutoff30)),
+      (xs) => xs.filter((r) => inLastNYears(r, cutoff30)),
     ],
-    6: [ // Saturday
-      (xs) => xs, // qualifying pool (same as full with hard floor)
+    6: [ // Saturday: niche, still 500+ minutes
+      (xs) => xs.filter(nichePool),
+      (xs) => xs.filter((r) => inLastNYears(r, cutoff30)),
     ],
-    0: [ // Sunday
-      (xs) => xs.filter((r) => !isAllStarSeason(r)), // deep cuts (not all-star pool)
-      (xs) => xs,
+    0: [ // Sunday: niche, still 500+ minutes
+      (xs) => xs.filter(nichePool),
+      (xs) => xs.filter((r) => inLastNYears(r, cutoff30)),
     ],
   };
 
-  const chain = pools[weekdayUtc] || [ (xs) => xs ];
+  const chain = pools[wd] || [ (xs) => xs ];
   for (const fn of chain) {
     const p = fn(base);
     if (p.length) return p;
@@ -150,11 +191,9 @@ function poolForDayWithFallback(seasons, weekdayUtc, careerIdx) {
   return base;
 }
 
-function pickDailyTarget(seasons, dateKey) {
+function pickDailyTarget(seasons, dateKey, weekdayOverride) {
   const d = new Date(`${dateKey}T12:00:00Z`);
-  const wd = d.getUTCDay();
-  const careerIdx = buildCareerIndex(seasons);
-  const use = poolForDayWithFallback(seasons, wd, careerIdx);
+  const use = poolForDayWithFallback(seasons, dateKey, weekdayOverride);
   const h = hash32(`${dateKey}|statmatch`);
   const idx = use.length ? h % use.length : 0;
   return use[idx];
@@ -363,9 +402,25 @@ function emojiGridFromGuesses(guesses, targetName) {
 
 function StatMatchApp() {
   const seasons = window.SEASONS || [];
+  const urlParams = useMemo(() => new URLSearchParams(window.location.search), []);
+  const testEnabled = urlParams.get("test") === "1" || urlParams.get("test") === "true";
+  const [dayOverride, setDayOverride] = useState(() => {
+    const v = urlParams.get("day");
+    const n = v == null ? null : Number(v);
+    return Number.isFinite(n) ? n : null;
+  });
+  const [roundNonce, setRoundNonce] = useState(0);
+
   const dateKey = useMemo(() => utcDateKey(), []);
   const puzzleNo = useMemo(() => puzzleNumber(dateKey), [dateKey]);
-  const target = useMemo(() => pickDailyTarget(seasons, dateKey), [seasons, dateKey]);
+  const target = useMemo(() => {
+    if (!testEnabled) return pickDailyTarget(seasons, dateKey, null);
+    // In test mode, reroll uses a nonce but stays inside the selected day pool.
+    const pool = poolForDayWithFallback(seasons, dateKey, dayOverride);
+    const h = hash32(`${dateKey}|test|${dayOverride ?? "auto"}|${roundNonce}`);
+    const idx = pool.length ? h % pool.length : 0;
+    return pool[idx] || pickDailyTarget(seasons, dateKey, null);
+  }, [seasons, dateKey, testEnabled, dayOverride, roundNonce]);
 
   const playerNames = useMemo(() => buildPlayerIndex(seasons), [seasons]);
 
@@ -374,9 +429,9 @@ function StatMatchApp() {
 
   const [stats, setStats] = useState(initialStats);
 
-  const [phase, setPhase] = useState(savedTodayInitial ? "result" : "play"); // play | result
-  const [guesses, setGuesses] = useState(() => savedTodayInitial?.guesses || []);
-  const [won, setWon] = useState(() => !!savedTodayInitial?.won);
+  const [phase, setPhase] = useState(!testEnabled && savedTodayInitial ? "result" : "play"); // play | result
+  const [guesses, setGuesses] = useState(() => (!testEnabled ? savedTodayInitial?.guesses || [] : []));
+  const [won, setWon] = useState(() => (!testEnabled ? !!savedTodayInitial?.won : false));
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [cardFlipped, setCardFlipped] = useState(false);
@@ -388,6 +443,7 @@ function StatMatchApp() {
 
   const recordFinish = useCallback(
     (didWin, guessList) => {
+      if (testEnabled) return; // don't affect streak stats in test mode
       setStats((prev) => {
         const next = { ...prev };
         const already = prev.byDate[dateKey];
@@ -421,6 +477,16 @@ function StatMatchApp() {
     },
     [dateKey]
   );
+
+  const startNewRound = () => {
+    setPhase("play");
+    setWon(false);
+    setGuesses([]);
+    setInput("");
+    setSuggestions([]);
+    setCardFlipped(false);
+    setRoundNonce((n) => n + 1);
+  };
 
   const submitGuess = useCallback(
     (nameRaw) => {
@@ -499,6 +565,37 @@ function StatMatchApp() {
 
       <header className="sm-header">
         <ModeNav current="match" />
+        {testEnabled && (
+          <div className="sm-testbar" role="region" aria-label="Test mode controls">
+            <div className="sm-testbar-left">
+              <span className="sm-testbadge">TEST</span>
+              <label className="sm-testlbl">
+                Day
+                <select
+                  className="sm-testselect"
+                  value={dayOverride == null ? "" : String(dayOverride)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setDayOverride(v === "" ? null : Number(v));
+                    startNewRound();
+                  }}
+                >
+                  <option value="">Auto (today)</option>
+                  <option value="1">Monday</option>
+                  <option value="2">Tuesday</option>
+                  <option value="3">Wednesday</option>
+                  <option value="4">Thursday</option>
+                  <option value="5">Friday</option>
+                  <option value="6">Saturday</option>
+                  <option value="0">Sunday</option>
+                </select>
+              </label>
+            </div>
+            <button type="button" className="btn btn-ghost sm-testbtn" onClick={startNewRound}>
+              New round
+            </button>
+          </div>
+        )}
         <div className="sm-header-row">
           <div className="sm-wordmark">
             <span className="word-stat">STAT</span>
@@ -657,6 +754,10 @@ function StatMatchApp() {
         <span className="dot">·</span>
         <a href="/explore" className="credit-link">
           STAT TWIN
+        </a>
+        <span className="dot">·</span>
+        <a href="/?test=1" className="credit-link">
+          TEST MODE
         </a>
         <span className="dot">·</span>
         <a
