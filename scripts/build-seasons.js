@@ -18,6 +18,7 @@ import { parse } from "csv-parse";
 const REPO_ROOT = path.resolve(import.meta.dirname, "..");
 const INPUT = path.resolve(REPO_ROOT, "..", "PlayerStatistics.csv");
 const OUTPUT = path.resolve(REPO_ROOT, "data", "seasons.js");
+const MIN_SEASON_START_YEAR = 1980;
 
 function seasonLabelFromGameDate(dateStr) {
   // `gameDate` in this dataset looks like "2026-04-26 21:30:00"
@@ -29,6 +30,12 @@ function seasonLabelFromGameDate(dateStr) {
   const startYear = m >= 10 ? y : y - 1;
   const endYear2 = String((startYear + 1) % 100).padStart(2, "0");
   return `${startYear}-${endYear2}`;
+}
+
+function seasonStartYear(seasonLabel) {
+  // "1980-81" -> 1980
+  const y = Number(String(seasonLabel).slice(0, 4));
+  return Number.isFinite(y) ? y : NaN;
 }
 
 function num(v) {
@@ -121,6 +128,8 @@ async function main() {
     if (minutes <= 0) continue;
 
     const season = seasonLabelFromGameDate(gameDate);
+    // Keep only modern seasons (1980 and on)
+    if (seasonStartYear(season) < MIN_SEASON_START_YEAR) continue;
     const key = `${name}||${season}||${teamCity}`;
     let agg = byKey.get(key);
     if (!agg) {
