@@ -202,6 +202,10 @@ function Background({ kind }) {
 // ─── Main App ───
 function App() {
   const seasons = window.SEASONS;
+  const seasonCountLabel = useMemo(
+    () => (seasons?.length ?? 0).toLocaleString(),
+    [seasons]
+  );
   const norm = useMemo(
     () => window.MATCH.computeNormalization(seasons),
     [seasons]
@@ -386,8 +390,8 @@ function App() {
             </button>
           </div>
           <div className="controls-footnote">
-            Distance computed across {seasons.length} player-seasons using
-            z-score normalized weighted Euclidean.
+            Distance computed across {seasonCountLabel} qualifying player-seasons
+            (≥ 500 total minutes) using z-score normalized weighted Euclidean.
           </div>
         </aside>
       </main>
@@ -395,7 +399,7 @@ function App() {
       <footer className="colophon">
         <span>STAT TWIN · A SLIDER STUDY</span>
         <span className="dot">·</span>
-        <span>{seasons.length} SEASONS INDEXED</span>
+        <span>{seasonCountLabel} SEASONS INDEXED (≥ 500 MIN)</span>
         <span className="dot">·</span>
         <span>SET IN PLAYFAIR & INTER</span>
       </footer>
