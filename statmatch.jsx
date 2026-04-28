@@ -623,7 +623,6 @@ function StatMatchApp() {
       <div className="sm-bg" />
 
       <header className="sm-header">
-        <ModeNav current="match" />
         {testEnabled && (
           <div className="sm-testbar" role="region" aria-label="Test mode controls">
             <div className="sm-testbar-left">
@@ -798,19 +797,7 @@ function StatMatchApp() {
       </main>
 
       <footer className="colophon sm-footer">
-        <span>STAT MATCH · DAILY</span>
-        <span className="dot">·</span>
-        <a href="/explore" className="credit-link">
-          STAT TWIN
-        </a>
-        <span className="dot">·</span>
-        <a href="/" className="credit-link">
-          TEST MODE
-        </a>
-        <span className="dot">·</span>
-        <a href="/?public=1" className="credit-link">
-          DAILY MODE
-        </a>
+        <span>STAT MATCH · (HIDDEN)</span>
         <span className="dot">·</span>
         <a
           href="https://www.linkedin.com/in/jake-cohen-b564764b/"
