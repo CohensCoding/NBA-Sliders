@@ -459,7 +459,10 @@ function GuessFeedbackTable({ seasons, guesses, target }) {
 function StatMatchApp() {
   const seasons = window.SEASONS || [];
   const urlParams = useMemo(() => new URLSearchParams(window.location.search), []);
-  const testEnabled = urlParams.get("test") === "1" || urlParams.get("test") === "true";
+  // Temporary: default to test mode so the homepage always lets you play fresh rounds.
+  // Later, we can flip this back to true daily-only by default.
+  const publicEnabled = urlParams.get("public") === "1" || urlParams.get("public") === "true";
+  const testEnabled = !publicEnabled;
   const [dayOverride, setDayOverride] = useState(() => {
     const v = urlParams.get("day");
     const n = v == null ? null : Number(v);
@@ -801,8 +804,12 @@ function StatMatchApp() {
           STAT TWIN
         </a>
         <span className="dot">·</span>
-        <a href="/?test=1" className="credit-link">
+        <a href="/" className="credit-link">
           TEST MODE
+        </a>
+        <span className="dot">·</span>
+        <a href="/?public=1" className="credit-link">
+          DAILY MODE
         </a>
         <span className="dot">·</span>
         <a
