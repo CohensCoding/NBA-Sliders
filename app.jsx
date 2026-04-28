@@ -384,7 +384,7 @@ function App() {
           </div>
           <div className="tagline">
             Adjust the sliders to find the NBA player-season that best matches your stat line.
-            Data covers 1980–present (≥ 300 minutes played).
+            Data covers 1980–present (≥ 500 minutes played).
           </div>
         </div>
         <div className="masthead-right">
@@ -478,7 +478,7 @@ function App() {
           </div>
           <div className="controls-footnote">
             Distance computed across {seasonCountLabel} qualifying player-seasons
-            (≥ 300 total minutes) using z-score normalized weighted Euclidean.
+            (≥ 500 total minutes) using z-score normalized weighted Euclidean.
           </div>
         </aside>
       </main>
@@ -486,7 +486,7 @@ function App() {
       <footer className="colophon">
         <span>STAT TWIN · A SLIDER STUDY</span>
         <span className="dot">·</span>
-        <span>{seasonCountLabel} SEASONS INDEXED (≥ 300 MIN)</span>
+        <span>{seasonCountLabel} SEASONS INDEXED (≥ 500 MIN)</span>
         <span className="dot">·</span>
         <span>SET IN PLAYFAIR & INTER</span>
         <span className="dot">·</span>

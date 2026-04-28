@@ -15,7 +15,7 @@ const INPUT = path.resolve(DATA_DIR, "PlayerStatistics.csv");
 const PLAYERS_INPUT = path.resolve(DATA_DIR, "Players.csv");
 const OUTPUT = path.resolve(REPO_ROOT, "data", "seasons.js");
 const MIN_SEASON_START_YEAR = 1980;
-const MIN_TOTAL_MINUTES = 300;
+const MIN_TOTAL_MINUTES = 500;
 
 /** Modern franchise → conference / division (v1 approximation) */
 const TEAM_GEO = {
@@ -112,8 +112,14 @@ function positionFromFlags(guard, forward, center) {
 
 /** Approximate tier from season box stats only (v1). */
 function tierForSeason({ ppg, mpg, gp, totMin }) {
-  if (ppg >= 26 && mpg >= 32 && gp >= 55) return "AllNBA";
-  if (ppg >= 22 && mpg >= 30 && gp >= 50) return "AllStar";
+  // v1 heuristics: prefer wider All-Star bucket to avoid ultra-tiny pools
+  if (ppg >= 27 && mpg >= 32 && gp >= 55) return "AllNBA";
+  if (
+    (ppg >= 19 && mpg >= 28 && gp >= 45) ||
+    (ppg >= 17 && mpg >= 30 && gp >= 55) ||
+    (ppg >= 21 && mpg >= 26 && gp >= 40)
+  )
+    return "AllStar";
   if (gp >= 58 && mpg >= 26) return "Starter";
   if (mpg >= 18 && gp >= 40) return "Rotation";
   if (totMin >= 1000) return "Qualifier";

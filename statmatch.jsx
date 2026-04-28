@@ -67,23 +67,94 @@ function tierRank(tier) {
   return o[tier] ?? 0;
 }
 
-function filterPoolByWeekday(seasons, weekdayUtc) {
+function buildCareerIndex(seasons) {
+  // Derive career-ish aggregates from the seasons table (v1 approximation).
+  const byName = new Map();
+  for (const r of seasons) {
+    const name = r.n;
+    if (!name) continue;
+    const gp = Number(r.gp || 0);
+    const totMin = Number(r.totMin || 0);
+    if (!byName.has(name)) byName.set(name, { games: 0, minutes: 0 });
+    const a = byName.get(name);
+    a.games += gp;
+    a.minutes += totMin;
+  }
+  return byName;
+}
+
+function isAllStarSeason(row) {
+  return tierRank(row.tier) >= tierRank("AllStar");
+}
+
+function filterQualifyingBase(seasons) {
+  // Hard floor: no puzzles below 500 total minutes.
+  return seasons.filter((r) => (r.totMin || 0) >= 500);
+}
+
+function poolForDayWithFallback(seasons, weekdayUtc, careerIdx) {
   // 0=Sun .. 6=Sat (JS getUTCDay)
-  if (weekdayUtc === 1) return seasons.filter((r) => r.tier === "AllNBA");
-  if (weekdayUtc === 2) return seasons.filter((r) => tierRank(r.tier) >= tierRank("AllStar"));
-  if (weekdayUtc === 3) return seasons.filter((r) => tierRank(r.tier) >= tierRank("Starter"));
-  if (weekdayUtc === 4) return seasons.filter((r) => tierRank(r.tier) >= tierRank("Rotation"));
-  if (weekdayUtc === 5) return seasons.filter((r) => (r.totMin || 0) >= 1000);
-  if (weekdayUtc === 6) return seasons;
-  // Sunday: deep cuts — not AllStar/AllNBA tier labels
-  return seasons.filter((r) => r.tier !== "AllStar" && r.tier !== "AllNBA");
+  const base = filterQualifyingBase(seasons);
+
+  const careerStarter = (r) => {
+    const a = careerIdx.get(r.n);
+    return !!a && a.games >= 200; // proxy for "career starts" unavailable in v1
+  };
+  const careerRotation = (r) => {
+    const a = careerIdx.get(r.n);
+    if (!a || a.games <= 0) return false;
+    return a.minutes / a.games >= 10; // career MPG avg proxy
+  };
+
+  // Ordered from easier -> harder. If a pool is empty, fall forward to the next harder pool.
+  const pools = {
+    1: [ // Monday
+      (xs) => xs.filter(isAllStarSeason),
+      (xs) => xs.filter(careerStarter),
+      (xs) => xs.filter(careerRotation),
+      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
+      (xs) => xs, // qualifying pool
+    ],
+    2: [ // Tuesday
+      (xs) => xs.filter(careerStarter),
+      (xs) => xs.filter(careerRotation),
+      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
+      (xs) => xs,
+    ],
+    3: [ // Wednesday
+      (xs) => xs.filter(careerRotation),
+      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
+      (xs) => xs,
+    ],
+    4: [ // Thursday
+      (xs) => xs.filter((r) => (r.totMin || 0) >= 1000),
+      (xs) => xs,
+    ],
+    5: [ // Friday
+      (xs) => xs, // qualifying pool (500+)
+    ],
+    6: [ // Saturday
+      (xs) => xs, // qualifying pool (same as full with hard floor)
+    ],
+    0: [ // Sunday
+      (xs) => xs.filter((r) => !isAllStarSeason(r)), // deep cuts (not all-star pool)
+      (xs) => xs,
+    ],
+  };
+
+  const chain = pools[weekdayUtc] || [ (xs) => xs ];
+  for (const fn of chain) {
+    const p = fn(base);
+    if (p.length) return p;
+  }
+  return base;
 }
 
 function pickDailyTarget(seasons, dateKey) {
   const d = new Date(`${dateKey}T12:00:00Z`);
   const wd = d.getUTCDay();
-  const pool = filterPoolByWeekday(seasons, wd);
-  const use = pool.length ? pool : seasons;
+  const careerIdx = buildCareerIndex(seasons);
+  const use = poolForDayWithFallback(seasons, wd, careerIdx);
   const h = hash32(`${dateKey}|statmatch`);
   const idx = use.length ? h % use.length : 0;
   return use[idx];
