@@ -298,7 +298,10 @@ function App() {
             <span className="word-stat">STAT</span>
             <span className="word-twin">TWIN</span>
           </div>
-          <div className="tagline">Find the player-season hidden in the numbers.</div>
+          <div className="tagline">
+            Adjust the sliders to find the NBA player-season that best matches your stat line.
+            Data covers 1980–present (≥ 300 minutes played).
+          </div>
         </div>
         <div className="masthead-right">
           <div className="dateline">EDITORIAL · APRIL 2026</div>
@@ -402,6 +405,15 @@ function App() {
         <span>{seasonCountLabel} SEASONS INDEXED (≥ 300 MIN)</span>
         <span className="dot">·</span>
         <span>SET IN PLAYFAIR & INTER</span>
+        <span className="dot">·</span>
+        <a
+          href="https://www.linkedin.com/in/jake-cohen-b564764b/"
+          target="_blank"
+          rel="noreferrer"
+          className="credit-link"
+        >
+          BUILT BY COHEN
+        </a>
       </footer>
 
       <window.TweaksPanel title="Tweaks">
