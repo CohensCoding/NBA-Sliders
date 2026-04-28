@@ -283,6 +283,14 @@ function App() {
     () => (seasons?.length ?? 0).toLocaleString(),
     [seasons]
   );
+  const [vw, setVw] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 1200));
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const portraitSize = vw <= 720 ? 220 : 300;
   const norm = useMemo(
     () => window.MATCH.computeNormalization(seasons),
     [seasons]
@@ -394,7 +402,7 @@ function App() {
           <div className="feature-tag">FEATURED MATCH</div>
           <div className="feature-card">
             <div className="portrait-wrap">
-              <Portrait row={primary?.row} size={300} />
+              <Portrait row={primary?.row} size={portraitSize} />
               <div className="match-stamp">
                 <div className="stamp-pct">
                   <TickerNum value={primary?.match || 0} decimals={1} />

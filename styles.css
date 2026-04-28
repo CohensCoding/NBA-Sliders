@@ -1196,3 +1196,101 @@ body {
   .others-grid { grid-template-columns: repeat(2, 1fr); }
   .wordmark { font-size: 64px; }
 }
+
+/* ─── Stat Twin: mobile-first refinement ─── */
+@media (max-width: 720px) {
+  .app {
+    padding: 16px 14px 22px;
+  }
+
+  .masthead {
+    align-items: flex-start;
+    padding-bottom: 10px;
+  }
+  .wordmark {
+    font-size: 52px;
+    gap: 10px;
+  }
+  .word-twin {
+    padding: 0 10px 3px;
+  }
+  .tagline {
+    font-size: 14px;
+  }
+  .masthead-right {
+    display: none;
+  }
+  .rule-double {
+    margin-bottom: 14px;
+  }
+
+  /* Convert grid to flex so we can reorder sections */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .controls {
+    order: 0;
+    padding: 16px 14px 14px;
+  }
+  .feature {
+    order: 1;
+  }
+
+  .controls-header {
+    margin-bottom: 14px;
+  }
+  .sliders {
+    gap: 14px;
+  }
+  .slider-row {
+    gap: 4px;
+  }
+  .slider-value {
+    font-size: 24px;
+  }
+
+  .feature-card {
+    padding: 16px 14px;
+    gap: 18px;
+  }
+  .portrait-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .match-stamp {
+    width: 94px;
+    height: 94px;
+    right: -10px;
+    bottom: -10px;
+  }
+  .stamp-pct {
+    font-size: 26px;
+  }
+
+  .feature-name {
+    font-size: 40px;
+  }
+  .feature-meta {
+    margin-bottom: 12px;
+  }
+  .shooting-line {
+    gap: 12px;
+  }
+
+  /* Make other matches swipeable instead of tall */
+  .others-grid {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .mini-match {
+    flex: 0 0 auto;
+    min-width: 190px;
+    scroll-snap-align: start;
+  }
+}
