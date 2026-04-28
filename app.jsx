@@ -391,7 +391,7 @@ function App() {
           </div>
           <div className="controls-footnote">
             Distance computed across {seasonCountLabel} qualifying player-seasons
-            (≥ 500 total minutes) using z-score normalized weighted Euclidean.
+            (≥ 300 total minutes) using z-score normalized weighted Euclidean.
           </div>
         </aside>
       </main>
@@ -399,7 +399,7 @@ function App() {
       <footer className="colophon">
         <span>STAT TWIN · A SLIDER STUDY</span>
         <span className="dot">·</span>
-        <span>{seasonCountLabel} SEASONS INDEXED (≥ 500 MIN)</span>
+        <span>{seasonCountLabel} SEASONS INDEXED (≥ 300 MIN)</span>
         <span className="dot">·</span>
         <span>SET IN PLAYFAIR & INTER</span>
       </footer>

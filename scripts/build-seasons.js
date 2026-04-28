@@ -19,6 +19,7 @@ const REPO_ROOT = path.resolve(import.meta.dirname, "..");
 const INPUT = path.resolve(REPO_ROOT, "..", "PlayerStatistics.csv");
 const OUTPUT = path.resolve(REPO_ROOT, "data", "seasons.js");
 const MIN_SEASON_START_YEAR = 1980;
+const MIN_TOTAL_MINUTES = 300;
 
 function seasonLabelFromGameDate(dateStr) {
   // `gameDate` in this dataset looks like "2026-04-26 21:30:00"
@@ -184,7 +185,7 @@ async function main() {
 
     // Qualifier threshold: total season minutes (not MPG).
     // This keeps real rotation roles while filtering "cup of coffee" stints.
-    if (agg.min < 500) continue;
+    if (agg.min < MIN_TOTAL_MINUTES) continue;
 
     seasons.push({
       n: agg.n,
