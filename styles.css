@@ -1415,3 +1415,187 @@ body {
   .page,
   .app { max-width: 100%; }
 }
+
+/* ─────────── MOBILE HOTFIX RESET (Apr 2026) ─────────── */
+/* Final overrides to stabilize phone/tablet rendering without touching desktop. */
+@media (max-width: 900px) {
+  .app {
+    padding: 20px 16px 48px;
+  }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .controls {
+    order: 0;
+    position: static;
+    padding: 16px 14px;
+  }
+  .feature {
+    order: 1;
+  }
+  .feature-card {
+    grid-template-columns: 1fr;
+    padding: 16px 14px;
+    gap: 14px;
+    overflow: hidden;
+  }
+  .portrait-wrap {
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  .portrait-wrap svg {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 320px;
+    display: block;
+  }
+  .match-stamp {
+    width: 84px;
+    height: 84px;
+    right: 8px;
+    bottom: 8px;
+    transform: rotate(-6deg);
+  }
+  .stamp-pct {
+    font-size: 24px;
+  }
+  .feature-name {
+    font-size: 40px;
+  }
+  .actual-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .actual-stat b {
+    font-size: 22px;
+  }
+  .shooting-line {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+  }
+  .others-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .mini-match {
+    min-width: 0;
+    flex: initial;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 14px 12px 34px;
+  }
+  .masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+  .masthead-right {
+    display: none;
+  }
+  .wordmark {
+    font-size: 40px;
+    line-height: 0.92;
+    gap: 8px;
+    flex-direction: row;
+    align-items: baseline;
+  }
+  .word-twin {
+    padding: 0 8px 2px;
+  }
+  .tagline {
+    font-size: 13px;
+    line-height: 1.32;
+  }
+  .rule-double {
+    margin-bottom: 12px;
+  }
+  .controls-header {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .controls-label {
+    font-size: 35px;
+  }
+  .controls-sub {
+    font-size: 9px;
+  }
+  .sliders {
+    gap: 14px;
+  }
+  .slider-row {
+    gap: 6px;
+  }
+  .slider-label {
+    font-size: 12px;
+  }
+  .slider-value {
+    font-size: 24px;
+  }
+  .slider-track-wrap {
+    height: 30px;
+  }
+  .slider-input::-webkit-slider-thumb {
+    width: 18px;
+    height: 30px;
+  }
+  .slider-input::-moz-range-thumb {
+    width: 18px;
+    height: 30px;
+  }
+  .controls-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btn {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 11px;
+  }
+  .feature-name {
+    font-size: 34px;
+  }
+  .feature-meta {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .actual-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .actual-stat {
+    padding: 8px 4px 7px;
+  }
+  .actual-stat b {
+    font-size: 20px;
+  }
+  .actual-stat span {
+    font-size: 8px;
+  }
+  .others-heading {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .others-text {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .colophon {
+    font-size: 8.5px;
+    gap: 7px;
+    padding-top: 12px;
+    line-height: 1.6;
+  }
+}
