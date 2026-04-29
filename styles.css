@@ -1736,11 +1736,23 @@ body {
     font-size: 9px;
   }
   .controls-actions {
+    position: fixed;
+    right: 10px;
+    top: 560px;
+    width: calc(38vw - 10px);
+    max-width: 170px;
+    min-width: 130px;
+    display: flex;
+    flex-direction: column;
     gap: 6px;
+    z-index: 12;
   }
   .btn {
     padding: 10px 10px;
     font-size: 10px;
+  }
+  .controls-footnote {
+    padding-bottom: 130px;
   }
 
   /* Right: persistent live result card */
