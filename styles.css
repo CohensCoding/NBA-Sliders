@@ -1685,3 +1685,118 @@ body {
     gap: 12px;
   }
 }
+
+/* ─────────── Mobile editor layout v2 (<=480px) ─────────── */
+@media (max-width: 480px) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(120px, 0.8fr);
+    gap: 10px;
+    align-items: start;
+  }
+
+  /* Left: compact stat editor */
+  .controls {
+    order: 0;
+    grid-column: 1;
+    padding: 10px 10px 12px;
+    max-height: calc(100vh - 84px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .controls-header {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .controls-label {
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+  .controls-sub {
+    font-size: 8px;
+    letter-spacing: 0.16em;
+  }
+  .sliders {
+    gap: 10px;
+  }
+  .slider-row {
+    gap: 4px;
+  }
+  .slider-label {
+    font-size: 11px;
+  }
+  .slider-value {
+    font-size: 20px;
+  }
+  .slider-track-wrap {
+    height: 26px;
+  }
+  .slider-extents {
+    font-size: 9px;
+  }
+  .controls-actions {
+    gap: 6px;
+  }
+  .btn {
+    padding: 10px 10px;
+    font-size: 10px;
+  }
+
+  /* Right: persistent live result card */
+  .feature {
+    order: 1;
+    grid-column: 2;
+    position: sticky;
+    top: 8px;
+  }
+  .feature-tag {
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    margin-bottom: 4px;
+  }
+  .feature-card {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 8px;
+    min-height: 0;
+  }
+  .portrait-wrap {
+    max-width: 100%;
+  }
+  .portrait-wrap svg {
+    max-height: 112px;
+  }
+  .match-stamp {
+    width: 52px;
+    height: 52px;
+    right: 2px;
+    bottom: 2px;
+  }
+  .stamp-pct {
+    font-size: 14px;
+  }
+  .stamp-symbol {
+    font-size: 9px;
+  }
+  .stamp-label {
+    font-size: 6px;
+  }
+  .feature-eyebrow {
+    font-size: 7px;
+    margin-bottom: 2px;
+  }
+  .feature-name {
+    font-size: 14px;
+    line-height: 1.02;
+    margin: 1px 0;
+  }
+  .feature-meta {
+    font-size: 10px;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+  .others {
+    display: none;
+  }
+}
