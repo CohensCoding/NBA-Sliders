@@ -1296,3 +1296,122 @@ body {
     scroll-snap-align: start;
   }
 }
+
+/* ─────────── TABLET (481–900px) ─────────── */
+@media (max-width: 900px) {
+  .page,
+  .app { padding: 24px 18px 60px; }
+  .wordmark { font-size: 56px; }
+  .feature-card { padding: 20px 18px; gap: 20px; }
+  .portrait-wrap { width: 100%; max-width: 320px; margin: 0 auto; }
+  .portrait-wrap svg { width: 100% !important; height: auto !important; }
+  .others-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─────────── MOBILE (≤ 480px) ─────────── */
+@media (max-width: 480px) {
+  /* Page chrome */
+  .page,
+  .app { padding: 18px 14px 80px; }
+  .masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+  .masthead-right { text-align: left; align-items: flex-start; }
+  .wordmark {
+    font-size: 44px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 0.9;
+  }
+  .deck,
+  .tagline { font-size: 14px; max-width: 100%; }
+
+  /* Feature card — let portrait shrink to viewport */
+  .feature-card {
+    padding: 16px 14px;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  .portrait-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
+  .portrait-wrap svg {
+    width: 100% !important;
+    height: auto !important;
+    display: block;
+  }
+  .feature-title,
+  .feature-name { font-size: 36px; line-height: 0.95; }
+  .feature-eyebrow { font-size: 10px; }
+
+  /* Stat strip — 5 cells in a row is too tight; collapse to 3+2 */
+  .actual-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .actual-stats .stat-cell:nth-child(4),
+  .actual-stats .stat-cell:nth-child(5),
+  .actual-stats .actual-stat:nth-child(4),
+  .actual-stats .actual-stat:nth-child(5) {
+    /* leave them — they wrap to row 2 */
+  }
+  .stat-value,
+  .actual-stat b { font-size: 22px; }
+  .stat-label,
+  .actual-stat span { font-size: 9px; }
+
+  /* Shooting line — stack vertically */
+  .shooting-line {
+    gap: 10px 16px;
+    font-size: 11px;
+  }
+
+  /* Other matches — 2 cards per row */
+  .others-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .mini-match { padding: 8px; }
+  .mini-portrait { aspect-ratio: 1 / 1; }
+
+  /* Sliders — bigger touch targets, comfortable spacing */
+  .controls { padding: 18px 14px; }
+  .controls-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .sliders { gap: 22px; }
+  .slider-row { gap: 8px; }
+  .slider-label { font-size: 13px; }
+  .slider-value { font-size: 28px; }
+  .slider-track-wrap { height: 36px; }     /* taller — easier to grab */
+  .slider-input::-webkit-slider-thumb {
+    width: 22px; height: 36px;             /* bigger thumb for fingers */
+  }
+  .slider-input::-moz-range-thumb {
+    width: 22px; height: 36px;
+  }
+  .slider-extents { font-size: 10px; }
+
+  /* Buttons — full width stack */
+  .controls-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btn { padding: 14px 16px; font-size: 12px; }
+
+  /* Footer */
+  .colophon { font-size: 9px; gap: 8px; padding-top: 12px; }
+
+  /* Hide Tweaks panel toggle on mobile if present — too cramped */
+  .tweaks-panel { display: none !important; }
+}
+
+/* Prevent horizontal page scroll on any narrow viewport */
+@media (max-width: 1100px) {
+  html, body { overflow-x: hidden; }
+  .page,
+  .app { max-width: 100%; }
+}
