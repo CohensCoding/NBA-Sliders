@@ -1796,6 +1796,33 @@ body {
     gap: 4px;
     margin-bottom: 0;
   }
+  .actual-line {
+    display: block;
+    margin: 6px 0 0;
+  }
+  .actual-label {
+    font-size: 7px;
+    letter-spacing: 0.14em;
+    margin-bottom: 4px;
+  }
+  .actual-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .actual-stat {
+    padding: 5px 3px 4px;
+    gap: 1px;
+  }
+  .actual-stat b {
+    font-size: 12px;
+    line-height: 1;
+  }
+  .actual-stat span {
+    font-size: 6px;
+    letter-spacing: 0.12em;
+  }
+
+  .shooting-line,
+  .match-bar,
   .others {
     display: none;
   }
