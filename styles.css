@@ -1599,3 +1599,89 @@ body {
     line-height: 1.6;
   }
 }
+
+/* ─────────── Mobile live-play UX pass (<=480px) ─────────── */
+/* Keep result + sliders tightly coupled so feedback feels immediate. */
+@media (max-width: 480px) {
+  .layout {
+    gap: 12px;
+  }
+  .feature {
+    order: 0;
+  }
+  .controls {
+    order: 1;
+    margin-top: 0;
+  }
+
+  /* Compact "live result" card */
+  .feature-tag {
+    margin-bottom: 6px;
+  }
+  .feature-card {
+    grid-template-columns: 128px 1fr;
+    gap: 10px;
+    padding: 10px;
+    align-items: start;
+  }
+  .portrait-wrap {
+    max-width: 128px;
+    margin: 0;
+  }
+  .portrait-wrap svg {
+    max-height: 168px;
+  }
+  .match-stamp {
+    width: 62px;
+    height: 62px;
+    right: 3px;
+    bottom: 3px;
+    border-width: 1.5px;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .stamp-pct {
+    font-size: 18px;
+  }
+  .stamp-symbol {
+    font-size: 11px;
+  }
+  .stamp-label {
+    font-size: 7px;
+    margin-top: 2px;
+  }
+
+  .feature-eyebrow {
+    font-size: 8.5px;
+    letter-spacing: 0.16em;
+    margin-bottom: 3px;
+  }
+  .feature-name {
+    font-size: 24px;
+    margin: 2px 0;
+    line-height: 0.95;
+  }
+  .feature-meta {
+    font-size: 13px;
+    margin-bottom: 0;
+    gap: 6px;
+  }
+
+  /* Hide dense detail blocks on phone; focus on instant match feedback */
+  .actual-line,
+  .shooting-line,
+  .match-bar,
+  .others {
+    display: none;
+  }
+
+  /* Bring sliders closer so result changes feel directly connected */
+  .controls {
+    padding-top: 12px;
+  }
+  .controls-header {
+    margin-bottom: 10px;
+  }
+  .sliders {
+    gap: 12px;
+  }
+}
